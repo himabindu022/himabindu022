@@ -2,9 +2,10 @@ const express = require('express')  // function , object,  create new applicatio
 const path = require('path')
 const hbs = require('handlebars')
 
+
 const geoCodeData = require('../weather app/weather')
 const forecastData = require('../weather app/forecast')
-const { error } = require('console')
+const connectDB = require('../config/db')
 
 const app = express()
 
@@ -68,8 +69,6 @@ app.get('getWeatherData', (req, res) => {
 })
 
 
-
-
 app.get('*', (req, res) => {
     res.send('404 Page not found')
 })
@@ -78,3 +77,5 @@ app.get('*', (req, res) => {
 app.listen(3000, () => {
     console.log('Server is running on port 3000')
 })
+
+connectDB()
