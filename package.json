@@ -1,0 +1,22 @@
+{
+  "name": "udemy-parctice",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "express": "^4.21.2",
+    "fetch": "^1.1.0",
+    "handlebars": "^4.7.8",
+    "nodemon": "^3.1.9",
+    "request": "^2.88.0",
+    "yargs": "^17.7.2"
+  },
+  "description": ""
+}
