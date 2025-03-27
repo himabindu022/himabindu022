@@ -1,12 +1,21 @@
 const express = require('express')
 require('./mongoose')
-const UserData = require('./models/usermodel')
-const Task = require('./models/tasks')
+//const UserData = require('./models/usermodel')
+//const Task = require('./models/tasks')
+const userRoute = require('./routes/userRoutes')
 
 const app = express()
 const port = process.env.PORT || 3000
 
+
+// All the all routes middleware
+// app.use((req, res, next) => {
+//     res.status(503).send('Site is currently down')
+// })
+
+
 app.use(express.json())//parse theincoming requests
+app.use(userRoute)  //Handle the All routes in userRoute
 
 
 //Promise
@@ -33,65 +42,7 @@ app.use(express.json())//parse theincoming requests
 // })
 
 
-//Async await
-app.post('/users', async(req, res) => {
-    try {
-        const user = await UserData.create(req.body)
 
-        if(!user) {
-            return res.status(400).send({message: "User not created"})
-        }
-        return res.send(user)   
-    } catch (error) {
-        return res.status(500).send({ message: "Internal Server Error" })
-    }
-})
-
-app.get('/user/:id', async(req, res) => {
-    try {
-        const user = await UserData.findById(req.params.id)
-        if (!user) {
-            return res.status(404).send({ message: "User not found" })
-        }
-        return res.send(user)
-    } catch (error) {
-        return res.status(500).send({ message: "Internal Server Error" })
-    }
-})
-
-app.get('/users', async( req, res) => {
-    try {
-        const users = await UserData.find({})
-
-        if(!users) {
-            return res.status(404).send({ message: "No users found" })
-        }
-        return res.send(users)
-    } catch (error) {
-        return res.status(500).send({ message: "Internal Server Error" })
-    }
-})
-
-app.patch('/user/:id', async(req, res) => {
-    try {
-        const updates = Object.keys(req.body)
-        const allowedUpdates = ["name", "email", "password"]
-        const isValidOperation = updates.every((each) => allowedUpdates.includes(each))
-
-        if (!isValidOperation) {
-            return res.status(400).send({ message: "Invalid updates!" })
-        }
-    
-        const user = await UserData.findByIdAndUpdate({_id:req.params.id}, req.body,{new: true})
-
-        if(!user) {
-            return res.status(404).send({ message: "User not found" })
-        }
-        return res.send(user) 
-    } catch (error) {
-        return res.status(500).send({ message: "Internal Server Error" })
-    }
-})
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
