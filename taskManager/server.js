@@ -1,11 +1,26 @@
 const express = require('express')
+const multer = require('multer')
 require('./mongoose')
 //const UserData = require('./models/usermodel')
 //const Task = require('./models/tasks')
 const userRoute = require('./routes/userRoutes')
+const taskRoute = require('./routes/taskRoutes')
 
 const app = express()
 const port = process.env.PORT || 3000
+
+
+//multer for upload image files
+const upload = multer({
+    dest:'images'
+})
+
+app.post('/upload', upload.single('image'),async(req, res) => {
+    res.send()
+    
+})
+
+
 
 
 // Apply to  ththe all routes middleware
@@ -26,30 +41,9 @@ const port = process.env.PORT || 3000
 
 app.use(express.json())//parse theincoming requests
 app.use(userRoute)  //Handle the All routes in userRoute
+app.use(taskRoute)  //Handle the All routes in taskRoute
 
 
-//Promise
-// app.post('/user', (req, res)=> {
-//     //console.log(req.body)
-//     const user = new UserData(req.body)
-//     user.save()
-//     .then((user) => {
-//         return res.send(user)
-//     }).catch((err) => {
-//         return res.send(err)
-//     })
-// })
-
-
-// app.post('/task', ( req, res) => {
-//     const task = new Task(req.body)
-//     task.save()
-//     .then((task) => {
-//         return res.send(task)
-//     }).catch((err) => {
-//         return res.send(err)
-//     })
-// })
 
 
 app.listen(port, () => {

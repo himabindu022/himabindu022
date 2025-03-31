@@ -3,7 +3,8 @@ const bcrypt = require('bcrypt')
 const UserData = require('../models/usermodel')
 const route = express.Router()
 const auth = require('../middleware/auth')
-
+const multer = require('multer')
+const sharp = require('sharp')
 
 //Async await
 route.post('/users/signup', async(req, res) => {
@@ -63,8 +64,6 @@ route.post('/user/logoutAll', auth, async(req, res) => {
         res.send(error)
     }
 })
-
-
 
 route.get('/users', auth, async( req, res) => {
     try {
@@ -131,4 +130,65 @@ route.delete('/user/:id', async(req,res) => {
         return res.status(500).send({ message: "Internal Server Error" }) 
     } 
 })
+
+const storage = multer.memoryStorage()
+const upload = multer({
+    storage: storage,
+    //dest: 'Avatars',
+    limits: {
+        fileSize: 1000000 // 1MB
+    },
+    fileFilter(req, file, cd) {
+        //To check the file extension
+        // if(!file.originalname.endsWith('.pdf')) {
+        //     return cd(new Error('Please upload a PDF'))
+        // }
+        //To check the file by using Regex
+        if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
+            return cd(new Error('Please upload a image'))
+        }
+        cd(undefined, true)
+    }
+})
+
+//handling error in express middleware
+// const errorHandling = (req, res, next) => {
+//     throw new Error('my from middleware')
+// }
+
+route.post('/users/me/avatar', auth, upload.single('avatar'), async(req, res) => {
+    const buffer = await sharp(req.file.buffer)
+    .resize ({width:300, height:250})
+    .png()
+    .toBuffer()
+    req.user.avatar = buffer
+    //req.user.avatar = req.file.buffer
+    //console.log(req.user.avatar)
+    await req.user.save()
+   res.send()
+}, (error, req, res, next) => {
+    res.status(400).send({error: error.message})
+})
+
+
+route.delete('/user/me/avatar', auth, upload.single('avatar'), async(req, res) => {
+    req.user.avatar = undefined
+    await req.user.save()
+    res.send()
+})
+
+route.get('/users/:id', async(req,res) => {
+    try {
+        const user = await UserData.findById(req.params.id)
+
+        if(!user || !user.avatar) {
+            return res.send('error')
+        }
+        res.set('content-Type', 'image/png')
+        res.send(user.avatar)
+    } catch (error) {
+        res.send(error)
+    }
+})
+
 module.exports = route;

@@ -21,3 +21,28 @@ mongoose.connect('mongodb://127.0.0.1:27017/task-Manager-API');
 // }).catch ((error) => {
 //     console.log(error);
 // })
+
+
+
+//Promise
+// app.post('/user', (req, res)=> {
+//     //console.log(req.body)
+//     const user = new UserData(req.body)
+//     user.save()
+//     .then((user) => {
+//         return res.send(user)
+//     }).catch((err) => {
+//         return res.send(err)
+//     })
+// })
+
+
+// app.post('/task', ( req, res) => {
+//     const task = new Task(req.body)
+//     task.save()
+//     .then((task) => {
+//         return res.send(task)
+//     }).catch((err) => {
+//         return res.send(err)
+//     })
+// })
