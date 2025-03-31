@@ -8,9 +8,19 @@ const app = express()
 const port = process.env.PORT || 3000
 
 
-// All the all routes middleware
+// Apply to  ththe all routes middleware
 // app.use((req, res, next) => {
 //     res.status(503).send('Site is currently down')
+// })
+
+//At specific conditions
+// app.use((req, res, next) =>{
+//     if (req.method === 'GET'){
+//         res.send('Site is currently down')
+//     }
+//     else{
+//         next()
+//     }
 // })
 
 
@@ -40,8 +50,6 @@ app.use(userRoute)  //Handle the All routes in userRoute
 //         return res.send(err)
 //     })
 // })
-
-
 
 
 app.listen(port, () => {

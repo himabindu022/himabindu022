@@ -49,6 +49,17 @@ const UserSchema = mongoose.Schema ({
   }]
   })
 
+UserSchema.methods.toJSON = function() {
+  const user = this
+  console.log(user)
+  const userObject  = user.toObject()
+  console.log(userObject)
+
+  delete userObject.password
+  delete userObject.tokens
+  return userObject
+}
+
 UserSchema.methods.generateAuthToken = async function(){
   const user = this
   const token = jwt.sign({ _id: user._id }, 'thismynewcouse')

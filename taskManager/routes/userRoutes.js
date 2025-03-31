@@ -42,19 +42,31 @@ route.post('/users/login', async(req, res) => {
     }
 })
 
-route.get('/user/:id', async(req, res) => {
+route.post('/user/logout', auth, async(req, res) => {
     try {
-        const user = await UserData.findById(req.params.id)
-        if (!user) {
-            return res.status(404).send({ message: "User not found" })
-        }
-        return res.send(user)
+        req.user.tokens = req.user.tokens.filter((token) =>{
+            return token.token !== req.token
+        })
+        await req.user.save()
+        res.send('logout successfull')
     } catch (error) {
-        return res.status(500).send({ message: "Internal Server Error" })
+        res.send(error)
     }
 })
 
-route.get('/users', auth,async( req, res) => {
+route.post('/user/logoutAll', auth, async(req, res) => {
+    try {
+        req.user.tokens = []
+        await req.user.save()
+        return res.send('logout all successfull')
+    } catch (error) {
+        res.send(error)
+    }
+})
+
+
+
+route.get('/users', auth, async( req, res) => {
     try {
         const users = await UserData.find({})
 
@@ -67,14 +79,27 @@ route.get('/users', auth,async( req, res) => {
     }
 })
 
-route.patch('/user/:id', async(req, res) => {
-    try {
-        //const user = await UserData.findByIdAndUpdate({_id:req.params.id}, req.body,{new: true})
-        const user  = await  UserData.findById(req.params.id)
 
-        if(!user) {
+route.get('/user/:id', async(req, res) => {
+    try {
+        const user = await UserData.findById(req.params.id)
+        if (!user) {
             return res.status(404).send({ message: "User not found" })
         }
+        return res.send(user)
+    } catch (error) {
+        return res.status(500).send({ message: "Internal Server Error" })
+    }
+})
+
+route.patch('/user/me', auth, async(req, res) => {
+    try {
+       // const user = await UserData.findByIdAndUpdate({_id:req.params.id}, req.body,{new: true})
+        //const user  = await  UserData.findById(req.params.id)
+
+        // if(!user) {
+        //     return res.status(404).send({ message: "User not found" })
+        // }
         //const userData = await UserData.findByIdAndUpdate({_id:req.params.id}, req.body,{new: true})
         const updates = Object.keys(req.body)
         const allowedUpdates = ["name", "email", "password"]
@@ -84,12 +109,11 @@ route.patch('/user/:id', async(req, res) => {
             return res.status(400).send({ message: "Invalid updates!" })
         }
         updates.forEach((update) => {
-            user[update] = req.body[update]
-            console.log('hello',user[update],'nooooooo', req.body[update])
+            req.user[update] = req.body[update]
+            console.log('hello',req.user[update],'nooooooo', req.body[update])
         })
-        await user.save()
-        return res.send(user)
-
+        await req.user.save()
+        return res.send(req.user)
     } catch (error) {
         return res.status(500).send({ message: "Internal Server Error" })
     }

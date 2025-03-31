@@ -1,0 +1,5 @@
+Again, they functions that return promises
+
+So, to finish I’d like to show a couple of examples of how async/await roughly translates into Promises. 
+I hope that this will help you see how async functions are simply syntactic sugar for creating functions 
+that return and wait for Promises.
